@@ -22,8 +22,9 @@ jobs:
           echo "${{ secrets.KEYSTORE }}" | base64 -d > app/release.jks
 
       - name: Build APK
-        run: ./gradlew assembleFullRelease
+        run: ./gradlew assembleFullRelease --no-daemon -Dorg.gradle.parallel=false
         env:
+          GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m"
           RELEASE_STORE_FILE: release.jks
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
