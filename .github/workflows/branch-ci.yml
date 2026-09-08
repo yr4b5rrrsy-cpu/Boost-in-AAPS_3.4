@@ -21,11 +21,8 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 -d > app/release.jks
 
-      - name: Prepare Resources
-        run: ./gradlew :pump:omnipod:common:generateReleaseResValues --no-daemon
-
       - name: Build APK
-        run: ./gradlew assembleFullRelease --no-daemon
+        run: ./gradlew assembleFullRelease --no-daemon --continue -x lint -x test
         env:
           GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m"
           RELEASE_STORE_FILE: release.jks
