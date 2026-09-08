@@ -1,0 +1,20 @@
+name: Generate Keystore
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate key and convert to Base64
+        run: |
+          keytool -genkey -v -keystore release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-alias -storepass 123456 -keypass 123456 -dname "CN=AndroidAPS, OU=Dev, O=AAPS, L=City, S=State, C=US"
+          echo "=========================================="
+          echo "СКОПИРУЙ ТЕКСТ НИЖЕ (ЭТО ТВОЙ KEYSTORE):"
+          echo "=========================================="
+          base64 -w 0 release.jks
+          echo ""
+          echo "=========================================="
+concurrency:
+  
