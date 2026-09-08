@@ -1,3 +1,4 @@
+          path: app/build/outputs/apk/full/release/*.apk
 name: Branch CI
 
 on:
@@ -21,8 +22,13 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE }}" | base64 -d > app/release.jks
 
+      - name: Generate Navigation & Sources
+        run: ./gradlew generateFullReleaseSources --no-daemon
+        env:
+          GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m"
+
       - name: Build APK
-        run: ./gradlew assembleFullRelease --no-daemon --continue -x lint -x test
+        run: ./gradlew assembleFullRelease --no-daemon -x lint -x test
         env:
           GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m"
           RELEASE_STORE_FILE: release.jks
