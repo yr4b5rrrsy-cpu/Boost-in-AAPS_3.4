@@ -1,4 +1,3 @@
-          path: app/build/outputs/apk/full/release/*.apk
 name: Branch CI
 
 on:
