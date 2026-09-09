@@ -1,4 +1,4 @@
-    name: Branch CI
+name: Branch CI
 
 on:
   workflow_dispatch:
@@ -30,18 +30,14 @@ jobs:
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
 
-      - name: Sign APK (V2/V3 Scheme)
-        uses: r2da/android-sign-apk@v1.4.0
-        with:
-          apk-path: app/build/outputs/apk/full/release/*.apk
-          keystore-base64: ${{ secrets.KEYSTORE }}
-          alias: ${{ secrets.RELEASE_KEY_ALIAS }}
-          store-pass: ${{ secrets.RELEASE_STORE_PASSWORD }}
-          key-pass: ${{ secrets.RELEASE_KEY_PASSWORD }}
+      - name: Sign APK with apksigner (V2/V3)
+        run: |
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | tail -n 1)
+          APK_FILE=$(ls app/build/outputs/apk/full/release/*.apk | head -n 1)
+          $BUILD_TOOLS_DIR/apksigner sign --ks app/release.jks --ks-pass pass:${{ secrets.RELEASE_STORE_PASSWORD }} --key-pass pass:${{ secrets.RELEASE_KEY_PASSWORD }} --ks-key-alias ${{ secrets.RELEASE_KEY_ALIAS }} --out app/build/outputs/apk/full/release/app-full-release-signed.apk $APK_FILE
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AAPS-Release-APK
-          path: app/build/outputs/apk/full/release/*-signed.apk
-
+          path: app/build/outputs/apk/full/release/app-full-release-signed.apk
