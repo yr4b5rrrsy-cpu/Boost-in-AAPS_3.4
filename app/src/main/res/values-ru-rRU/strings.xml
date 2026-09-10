@@ -43,7 +43,6 @@
     <string name="disable_night_mode_low_tt">Отключать ночной режим при низкой ВЦ</string>
     <string name="auto_detect_sleep">Автоопределение сна (пульс + шаги)</string>
     <!-- Перевод Boost V6 -->
-    <string name="boost_v6_title">Настройки Boost V6</string>
     <string name="boost_insulin_required_pct">Процент потребности в инсулине (Insulin Required %)</string>
     <string name="boost_bolus_cap">Лимит болюса Boost (Bolus Cap)</string>
     <string name="boost_scale_value">Множитель Boost (Scale Value)</string>
