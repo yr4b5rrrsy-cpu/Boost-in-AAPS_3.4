@@ -4,8 +4,14 @@ Boost is an independently maintained variant of [AAPS](https://github.com/nights
 4.0.0 that adds the Boost APS plugin. It is not a release of, or supported by, the AAPS project.
 You build it yourself and you are responsible for how you use it. AGPL-3.0, as AAPS.
 
-This line is Boost 6.3.2: the V6 meal logic and the Boost high temp, with each SMB sized by the
+This line is Boost 6.3.3: the V6 meal logic and the Boost high temp, with each SMB sized by the
 Boost tiers as in Boost 6.2.0 for AAPS 3.4.2.6.
+
+6.3.3 changes the default of Boost max IOB to 12 U, which makes Boost use your max IOB (up to 12 U), and stops
+auto-config copying max IOB into it. A value you set lower is kept. It also lets the committed cap go
+up to 5.0 U, keeps the sleep detector from starting sleep before your night start when no heart rate
+reaches the phone, adds a light version of the Boost overview, and logs a night insulin-need check
+that never notifies. It otherwise doses as 6.3.2.
 
 6.3.2 sets the two SMB minutes settings to 15 (standard) and 20 (UAM) once, the first time Boost
 runs, and then leaves them to you. 6.3.1 lowered a higher value on every loop cycle, so neither
@@ -47,6 +53,21 @@ otherwise doses as 6.3.1.
   been committed.
 - RECOVERING is capped at the committed cap, so it never gives more in one cycle than the meal state
   does.
+- Boost max IOB defaults to 12 U, its maximum. Every Boost dose is already held to your max IOB, so at
+  12 Boost uses your max IOB and follows it when it changes, stopping at 12 U when max IOB is higher.
+  Set a lower value to keep Boost doses below it. Auto-config no longer copies max IOB into it. When you install this, a value nobody chose
+  is moved to 12 once: the old default of 1.0, or the copy auto-config made. Any other value is kept.
+  For anyone who had 1.0 or an old copy, Boost can now give more insulin, up to their max IOB.
+- The committed cap can be set up to 5.0 U, where it stopped at 2.5 U, and auto-config uses the same
+  range. Auto-config sets it from your history as the larger of your typical SMB and a fortieth of
+  your total daily dose, so it goes above 2.5 U only when your daily dose is above about 100 U or
+  your typical SMB is above 2.5 U. The weekly re-derivation moves the cap you have, including one you
+  set, with changes in that derivation, up to 5.0 U at most. The primer stays at 2.5 U at most. Its
+  default (0.5 U) is unchanged.
+- Without heart rate (no reading in the last 24 hours), the sleep detector starts sleep no earlier than
+  your night start. In 6.3.2 it could start up to 90 minutes before it, through an evening meal, and
+  while it reads sleeping the V6 meal logic and the Boost tiers do not dose. A bedtime learned from
+  past nights can still move night start later, but not earlier. With heart rate it works as before.
 
 ## Other changes
 
@@ -62,6 +83,9 @@ otherwise doses as 6.3.1.
 - On the watch, the ranged glucose and DynISF complications go blank when the phone is out of
   contact or the reading is old.
 - "Meal-detection Sensitivity" is renamed "Insulin budget scale". It works as before.
+- The Boost overview has a light version, which follows the AAPS colour scheme setting.
+- The insulin-need watch also checks insulin from midnight to 6 am over the last 3 nights against the
+  14 before. It only writes the result to the log (ndn= in the reason) and never notifies.
 
 ## Installing over your current build
 
